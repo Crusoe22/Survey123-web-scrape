@@ -1,6 +1,8 @@
 import requests
 from openpyxl import Workbook
 from datetime import datetime
+import pandas as pd
+
 
 
 def grab_data():
@@ -78,4 +80,16 @@ def grab_data():
     else:
         print("Login failed. Status code:", login_response.status_code)
 
+def format_excel():
+    
+    df = pd.read_excel(r"C:\Users\Nolan\Documents\ExcelSheets\Survey123-FuelConsumption.xlsx")
 
+    df.rename(columns={'objectid': 'ObjectID', 'EditDate': 'Edit Date', 'fuel_type': 'Fuel Type', 'name': 'Name', 'vehicle_number': 'Vehicle Number',
+                        'gallons_used': 'Gallons Used', 'odometer_reading': 'Odometer Reading', 'vehicle_n_other': 'Vehicle Other'}, inplace=True)
+    
+    df.drop(columns=["globalid", "CreationDate", "Creator", "Editor"], inplace=True)
+
+    df.to_excel(r"C:\Users\Nolan\Documents\ExcelSheets\Survey123-FuelConsumption.xlsx", index=False,header=True)
+
+grab_data()
+format_excel()
