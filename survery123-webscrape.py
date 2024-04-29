@@ -2,16 +2,17 @@ import requests
 from openpyxl import Workbook
 from datetime import datetime
 import pandas as pd
-
+from datetime import date
+import openpyxl
 
 
 def grab_data():
     
-    # Your ArcGIS username and password
+    # ArcGIS online username and password
     username = "Nolan_HUD"
     password = "nolanm1%HUD"
 
-    # URL of the API endpoint to fetch data
+    # URL of the API endpoint to fetch data (Ctrl+Shift+I on webpage)
     api_url = "https://services.arcgis.com/B1yJ6W2oC1kUrC5J/arcgis/rest/services/survey123_bf52e82786ca4d93a5751cc6b0e3833c/FeatureServer/0/query"
 
     # Parameters for the API request
@@ -84,12 +85,55 @@ def format_excel():
     
     df = pd.read_excel(r"C:\Users\Nolan\Documents\ExcelSheets\Survey123-FuelConsumption.xlsx")
 
-    df.rename(columns={'objectid': 'ObjectID', 'EditDate': 'Edit Date', 'fuel_type': 'Fuel Type', 'name': 'Name', 'vehicle_number': 'Vehicle Number',
+    df.rename(columns={'objectid': 'Object ID', 'EditDate': 'Edit Date', 'fuel_type': 'Fuel Type', 'name': 'Name', 'vehicle_number': 'Vehicle Number',
                         'gallons_used': 'Gallons Used', 'odometer_reading': 'Odometer Reading', 'vehicle_n_other': 'Vehicle Other'}, inplace=True)
     
     df.drop(columns=["globalid", "CreationDate", "Creator", "Editor"], inplace=True)
 
     df.to_excel(r"C:\Users\Nolan\Documents\ExcelSheets\Survey123-FuelConsumption.xlsx", index=False,header=True)
 
-grab_data()
-format_excel()
+
+def remove_rows_by_date(file_path, sheet_name, date_threshold):
+    # Read the Excel file into a DataFrame
+    df = pd.read_excel(file_path, sheet_name=sheet_name)
+
+        # Convert "Edit Date" column to datetime if it's not already
+    if df['Edit Date'].dtype != 'datetime64[ns]':
+        df['Edit Date'] = pd.to_datetime(df['Edit Date'])
+
+    # Filter rows where "EditDate" is greater than the threshold date
+    df = df[df['Edit Date'] <= date_threshold]
+
+    # Write the filtered DataFrame back to the Excel file
+    with pd.ExcelWriter(file_path, engine='openpyxl', mode='a', if_sheet_exists='replace') as writer:
+        df.to_excel(writer, sheet_name=sheet_name, index=False)
+
+
+def update_width(): 
+
+    try:
+        wb = openpyxl.load_workbook(r"C:\Users\Nolan\Documents\ExcelSheets\Survey123-FuelConsumption.xlsx") 
+        # Get workbook active sheet   
+        # from the active attribute.  
+        sheet = wb.active 
+
+        # set the width of the column 
+        sheet.column_dimensions['B'].width = 50
+
+        print("Width updated successfully.")
+    except FileNotFoundError:
+        print("File not found.")
+    except Exception as e:
+        print("An error occurred:", e)
+
+if __name__ == '__main__':
+
+    todays_date = date.today()
+    current_month = todays_date.month
+
+    grab_data()
+    format_excel()
+    update_width()
+    #remove_rows_excel()
+    # Example usage: Remove rows with "EditDate" greater than 4/20/24
+    #remove_rows_by_date(r"C:\Users\Nolan\Documents\ExcelSheets\Survey123-FuelConsumption.xlsx", "Sheet1", pd.to_datetime(current_month))
