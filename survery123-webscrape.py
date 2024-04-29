@@ -115,10 +115,16 @@ def update_width():
         wb = openpyxl.load_workbook(r"C:\Users\Nolan\Documents\ExcelSheets\Survey123-FuelConsumption.xlsx") 
         # Get workbook active sheet   
         # from the active attribute.  
-        sheet = wb.active 
+        ws = wb.active 
+        
+        # Set the width of all columns to 22
+        for col in ws.columns:
+            col_width = 22
+            col[0].column_letter
+            ws.column_dimensions[col[0].column_letter].width = col_width
+            # Save the workbook
 
-        # set the width of the column 
-        sheet.column_dimensions['B'].width = 50
+        wb.save(r"C:\Users\Nolan\Documents\ExcelSheets\Survey123-FuelConsumption.xlsx")
 
         print("Width updated successfully.")
     except FileNotFoundError:
