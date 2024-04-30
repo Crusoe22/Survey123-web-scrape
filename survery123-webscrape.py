@@ -6,7 +6,7 @@ from datetime import date
 import openpyxl
 
 
-def grab_data():
+def grab_data(excel_sheet):
     
     # ArcGIS online username and password
     username = "Nolan_HUD"
@@ -73,7 +73,7 @@ def grab_data():
                 ws.append(row_data)
 
             # Save workbook to Excel file
-            file_path = r"C:\Users\Nolan\Documents\ExcelSheets\Survey123-FuelConsumption.xlsx"
+            file_path = excel_sheet
             wb.save(file_path)
             print("Data has been written to", file_path)
         else:
@@ -81,17 +81,16 @@ def grab_data():
     else:
         print("Login failed. Status code:", login_response.status_code)
 
-def format_excel():
+def format_excel(excel_sheet):
     
-    df = pd.read_excel(r"C:\Users\Nolan\Documents\ExcelSheets\Survey123-FuelConsumption.xlsx")
+    df = pd.read_excel(excel_sheet)
 
     df.rename(columns={'objectid': 'Object ID', 'EditDate': 'Edit Date', 'fuel_type': 'Fuel Type', 'name': 'Name', 'vehicle_number': 'Vehicle Number',
                         'gallons_used': 'Gallons Used', 'odometer_reading': 'Odometer Reading', 'vehicle_n_other': 'Vehicle Other'}, inplace=True)
     
     df.drop(columns=["globalid", "CreationDate", "Creator", "Editor"], inplace=True)
 
-    df.to_excel(r"C:\Users\Nolan\Documents\ExcelSheets\Survey123-FuelConsumption.xlsx", index=False,header=True)
-
+    df.to_excel(excel_sheet, index=False,header=True)
 
 def remove_rows_by_date(file_path, sheet_name, date_threshold):
     # Read the Excel file into a DataFrame
@@ -108,11 +107,10 @@ def remove_rows_by_date(file_path, sheet_name, date_threshold):
     with pd.ExcelWriter(file_path, engine='openpyxl', mode='a', if_sheet_exists='replace') as writer:
         df.to_excel(writer, sheet_name=sheet_name, index=False)
 
-
-def update_width(): 
+def update_width(excel_sheet): 
 
     try:
-        wb = openpyxl.load_workbook(r"C:\Users\Nolan\Documents\ExcelSheets\Survey123-FuelConsumption.xlsx") 
+        wb = openpyxl.load_workbook(excel_sheet) 
         # Get workbook active sheet   
         # from the active attribute.  
         ws = wb.active 
@@ -124,7 +122,7 @@ def update_width():
             ws.column_dimensions[col[0].column_letter].width = col_width
             # Save the workbook
 
-        wb.save(r"C:\Users\Nolan\Documents\ExcelSheets\Survey123-FuelConsumption.xlsx")
+        wb.save(excel_sheet)
 
         print("Width updated successfully.")
     except FileNotFoundError:
@@ -137,9 +135,9 @@ if __name__ == '__main__':
     todays_date = date.today()
     current_month = todays_date.month
 
-    grab_data()
-    format_excel()
-    update_width()
-    #remove_rows_excel()
-    # Example usage: Remove rows with "EditDate" greater than 4/20/24
+    excel_sheet = r"C:\Users\Nolan\Documents\ExcelSheets\Survey123-FuelConsumption.xlsx"
+
+    grab_data(excel_sheet)
+    format_excel(excel_sheet)
+    update_width(excel_sheet)
     #remove_rows_by_date(r"C:\Users\Nolan\Documents\ExcelSheets\Survey123-FuelConsumption.xlsx", "Sheet1", pd.to_datetime(current_month))
