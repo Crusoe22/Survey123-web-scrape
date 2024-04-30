@@ -135,7 +135,7 @@ if __name__ == '__main__':
     todays_date = date.today()
     current_month = todays_date.month
 
-    excel_sheet = r"C:\Users\Nolan\Documents\ExcelSheets\Survey123-FuelConsumption.xlsx"
+    excel_sheet = r"\\VSERVER22\ForEveryone\Nolan\Fuel-Consumption\Fuel-Consumption-Survey-Data.xlsx"
 
     grab_data(excel_sheet)
     format_excel(excel_sheet)
