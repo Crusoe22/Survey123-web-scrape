@@ -9,8 +9,8 @@ import openpyxl
 def grab_data(excel_sheet):
     
     # ArcGIS online username and password
-    username = "Nolan_HUD"
-    password = "nolanm1%HUD"
+    username = "Nolan_***"
+    password = "nolanmoss"
 
     # URL of the API endpoint to fetch data (Ctrl+Shift+I on webpage)
     api_url = "https://services.arcgis.com/B1yJ6W2oC1kUrC5J/arcgis/rest/services/survey123_bf52e82786ca4d93a5751cc6b0e3833c/FeatureServer/0/query"
